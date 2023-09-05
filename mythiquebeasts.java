@@ -23,10 +23,25 @@ public class mythiquebeasts extends JFrame{
         this.setLocationRelativeTo(null);
         this.getContentPane().setBackground(Color.BLACK);
         
+        
         //Title Page
-        JLabel titletext = new JLabel("MYTHIQUEBEASTS", 0);
+        JLabel titletext = new JLabel("MYTHIQUEBEASTS");
         this.add(titletext);
+        titletext.setBounds(160, 20, 350, 100);
         titletext.setForeground(Color.WHITE);
         titletext.setFont(new Font("Serif", Font.BOLD, 32));
+        JButton startbutton = new JButton("Start");
+        this.add(startbutton);
+        startbutton.setBounds(260, 200, 120, 30);
+        
+        /* 
+        JLabel imagelogo = new JLabel();
+        imagelogo.setIcon(new ImageIcon("textures\\icon\\icon.png"));
+        Dimension imagelogosize = imagelogo.getPreferredSize();
+        imagelogo.setBounds(20, 1, imagelogosize.width, imagelogosize.height);
+        this.add(imagelogo);
+        */
+
+        this.setLayout(null);
     }
 }
