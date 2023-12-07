@@ -83,7 +83,7 @@ public class ActualGame extends JFrame implements KeyListener {
 		this.setContentPane(new JLabel(new ImageIcon("textures\\backgroundFin.png")));
 		this.setIconImage(logo.getImage());
 		this.addKeyListener(this);
-		
+
 		// add
 		this.add(dino);
 		this.add(dinoBorder);
@@ -103,7 +103,7 @@ public class ActualGame extends JFrame implements KeyListener {
 		score = 0;
 		dinoX = 35;
 		dinoY = 225;
-		dinoStandBorderWidth = 58;
+		dinoStandBorderWidth = 56;
 		dinoStandBorderHeight = 64;
 		dinoCrouchY = dinoY + 25;
 		dinoCrouchBorderWidth = 80;
@@ -111,20 +111,20 @@ public class ActualGame extends JFrame implements KeyListener {
 		dinoJumpLimit = 60; // Y-60 in jframe
 		cactusX = 900;
 		cactusY = 217;
-		cactusBorderX = cactusX + 55;
+		cactusBorderX = cactusX + 60;
 		cactusBorderY = cactusY + 20;
 		cactusThroughLimit = -70;
-		cactusBorderWidth = 40;
+		cactusBorderWidth = 35;
 		cactusBorderHeight = 55;
-	
+
 		// dino
-		
+
 		dino.setBounds(dinoX, dinoY, 94, 64); // 94 x 64 depends on the size of the image
 		dinoBorder.setBounds(dinoX, dinoY, dinoStandBorderWidth, dinoStandBorderHeight);
 		dinoBorder.setBorder(new LineBorder(Color.RED));
 
 		// cactus
-		
+
 		cactus.setBounds(cactusX, cactusY, 94, 94); // can be randomized
 		cactusBorder.setBounds(cactusBorderX, cactusBorderY, cactusBorderWidth, cactusBorderHeight);
 		cactusBorder.setBorder(new LineBorder(Color.RED));
@@ -136,6 +136,11 @@ public class ActualGame extends JFrame implements KeyListener {
 		switch (e.getKeyChar()) {
 		case ' ':
 			if (!playing) {
+				jumpTimer.stop();
+				dino.setLocation(dino.getX(), dino.getY());
+				dinoBorder.setLocation(dinoBorder.getX(), dinoBorder.getY());
+				reset();
+				
 				playing = true;
 				initialPosition();
 				cactusTimer.start();
@@ -178,28 +183,27 @@ public class ActualGame extends JFrame implements KeyListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (collided) {
-				jumpTimer.stop();
-				dino.setLocation(dino.getX(), dino.getY());
-				dinoBorder.setLocation(dinoBorder.getX(), dinoBorder.getY());
-				reset();
+				//moved
+			} else{
+				if (!jump) {
+					dinoBorder.setLocation(dino.getX(), dino.getY() - 5);
+					dino.setLocation(dino.getX(), dino.getY() - 5);
+					onAir = true;
+				} else {
+					dinoBorder.setLocation(dino.getX(), dino.getY() + 10);
+					dino.setLocation(dino.getX(), dino.getY() + 10);
+				}
+				if (dino.getY() <= dinoJumpLimit) {
+					jump = true;
+				} else if (dino.getY() >= dinoY) {
+					dinoBorder.setLocation(dino.getX(), dinoY);
+					dino.setLocation(dino.getX(), dinoY);
+					jump = false;
+					onAir = false;
+					jumpTimer.stop();
+				}
 			}
-			if (!jump) {
-				dino.setLocation(dino.getX(), dino.getY() - 5);
-				dinoBorder.setLocation(dino.getX(), dino.getY() - 5);
-				onAir = true;
-			} else {
-				dino.setLocation(dino.getX(), dino.getY() + 10);
-				dinoBorder.setLocation(dino.getX(), dino.getY() + 10);
-			}
-			if (dino.getY() <= dinoJumpLimit) {
-				jump = true;
-			} else if (dino.getY() >= dinoY) {
-				dino.setLocation(dino.getX(), dinoY);
-				dinoBorder.setLocation(dino.getX(), dinoY);
-				jump = false;
-				onAir = false;
-				jumpTimer.stop();
-			}
+
 		}
 	}
 
@@ -226,6 +230,7 @@ public class ActualGame extends JFrame implements KeyListener {
 			if (checkCollision(dinoBorder, cactusBorder)) {
 				playing = false;
 				collided = true;
+				System.out.println("Collided");
 				cactusTimer.stop();
 				scoreTimer.stop();
 				dinoRunAnimTimer.stop();

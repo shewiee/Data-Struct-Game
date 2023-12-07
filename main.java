@@ -9,14 +9,13 @@
  * 
  * Problems:
  * 
- * 	dino bug where mo restart syag kaugalingon after a collision
+ * 	dino border auto down
  * 
  * */
-
 public class Main {
 
 	public static void main(String[] args) {
-		
+		System.out.println("wow");
 		new ActualGame();
 	}
 
