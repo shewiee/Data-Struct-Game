@@ -257,7 +257,10 @@ public class ActualGame extends JFrame implements KeyListener {
 	    public void actionPerformed(ActionEvent e) {
 	        cactus.setLocation(cactus.getX() - 5, cactus.getY());
 	        cactusBorder.setLocation(cactusBorder.getX() - 5, cactusBorder.getY());
-	        dinoBorder.setLocation(dino.getX(), dino.getY()); // Updated line
+	        if(!crouch) {
+	        	dinoBorder.setLocation(dino.getX(), dino.getY());
+	        }//fixed border for non crouching dino
+	        
 
 	        if (cactus.getX() < cactusThroughLimit) {
 	            cactus.setLocation(cactusX, cactus.getY());
@@ -267,10 +270,9 @@ public class ActualGame extends JFrame implements KeyListener {
 	        // EXAMPLE OF COLLISION
 	        if (checkCollision(dinoBorder, cactusBorder)) {
 	            dino.setLocation(dino.getX(), dino.getY());
-	            dinoBorder.setLocation(dino.getX(), dino.getY()); // Updated line
+	            dinoBorder.setLocation(dino.getX(), dino.getY());
 	            playing = false;
 	            collided = true;
-	            System.out.println("Collided");
 	            cactusTimer.stop();
 	            scoreTimer.stop();
 	            dinoRunAnimTimer.stop();
