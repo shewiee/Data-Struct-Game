@@ -66,6 +66,8 @@ public class ActualGame extends JFrame implements KeyListener {
 	int cactusThroughLimit;
 	int cactusBorderWidth;
 	int cactusBorderHeight;
+	
+	int velocity;
 
 	// reminders
 	// PLEASE PRESS JUMP TO PLAY
@@ -112,7 +114,7 @@ public class ActualGame extends JFrame implements KeyListener {
 
 		jumpTimer = new Timer(10, new jumpTimerListener());
 		cactusTimer = new Timer(10, new cactusListener());
-		scoreTimer = new Timer(100, new scoreTimerListener());
+		scoreTimer = new Timer(200, new scoreTimerListener());
 		dinoRunAnimTimer = new Timer(100, new dinoRunAnimTimerListener());
 		cloudsTimer = new Timer(100, new cloudsTimerListener());
 	}
@@ -124,31 +126,29 @@ public class ActualGame extends JFrame implements KeyListener {
 		dinoY = 225;
 		dinoStandBorderWidth = 56;
 		dinoStandBorderHeight = 60;
-		dinoCrouchY = dinoY + 25;
+		dinoCrouchY = 25;
 		dinoCrouchBorderWidth = 80;
 		dinoCrouchBorderHeight = 34;
-		dinoJumpLimit = 60; // Y-60 in jframe
+		dinoJumpLimit = 30;
 		cactusX = 900;
 		cactusY = 217;
-		cactusBorderX = cactusX + 60;
-		cactusBorderY = cactusY + 20;
+		cactusBorderX = cactusX + 58;
+		cactusBorderY = cactusY + 25;
 		cactusThroughLimit = -70;
-		cactusBorderWidth = 35;
-		cactusBorderHeight = 55;
+		cactusBorderWidth = 30;
+		cactusBorderHeight = 50;
+		velocity = 4;
 
 		// dino
 
 		dino.setBounds(dinoX, dinoY, 94, 64); // 94 x 64 depends on the size of the image
 		dinoBorder.setBounds(dinoX, dinoY, dinoStandBorderWidth, dinoStandBorderHeight);
-		dinoBorder.setBorder(new LineBorder(Color.RED));
 
 		// cactus
 
 		cactus.setBounds(cactusX, cactusY, 94, 94); // can be randomized
 		cactusBorder.setBounds(cactusBorderX, cactusBorderY, cactusBorderWidth, cactusBorderHeight);
-		cactusBorder.setBorder(new LineBorder(Color.RED));
-		// cactus.setBorder(new LineBorder(Color.BLACK)); //border for collision
-		// purposes
+		
 	}
 
 	@Override
@@ -172,6 +172,10 @@ public class ActualGame extends JFrame implements KeyListener {
 				jumpTimer.start();
 				dinoBorder.setBounds(dinoX, dinoY, dinoStandBorderWidth, dinoStandBorderHeight);
 			}
+			break;
+		case 'd':
+			dinoBorder.setBorder(new LineBorder(Color.RED));
+			cactusBorder.setBorder(new LineBorder(Color.RED));
 			break;
 		}
 	}
@@ -200,9 +204,18 @@ public class ActualGame extends JFrame implements KeyListener {
 				}
 				break;
 			case 40:
+				//updated code
 				if (!onAir || jump) {
 					crouch = true;
-					dinoBorder.setBounds(dinoX, dinoCrouchY, dinoCrouchBorderWidth, dinoCrouchBorderHeight);
+					if(!onAir) {
+						dino.setIcon(new javax.swing.ImageIcon("textures\\dinasourduckleft.png"));
+						dinoBorder.setBounds(dinoX, dino.getY() + dinoCrouchY, dinoCrouchBorderWidth, dinoCrouchBorderHeight);
+					}			
+				}
+				else if(onAir && dino.getY() < 130) {
+					jump = true;
+				}
+				if (crouch && !onAir) {
 					dino.setIcon(new javax.swing.ImageIcon("textures\\dinasourduckleft.png"));
 				}
 				break;
@@ -221,8 +234,8 @@ public class ActualGame extends JFrame implements KeyListener {
 	    public void actionPerformed(ActionEvent e) {
 	        if (!collided) {
 	            if (!jump) {
-	                dinoBorder.setLocation(dino.getX(), dino.getY() - 5);
-	                dino.setLocation(dino.getX(), dino.getY() - 5);
+	                dinoBorder.setLocation(dino.getX(), dino.getY() - 7);
+	                dino.setLocation(dino.getX(), dino.getY() - 7);
 	                onAir = true;
 	            } else {
 	                dinoBorder.setLocation(dino.getX(), dino.getY() + 10);
@@ -255,8 +268,8 @@ public class ActualGame extends JFrame implements KeyListener {
 	private class cactusListener implements ActionListener {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-	        cactus.setLocation(cactus.getX() - 5, cactus.getY());
-	        cactusBorder.setLocation(cactusBorder.getX() - 5, cactusBorder.getY());
+	        cactus.setLocation(cactus.getX() - velocity, cactus.getY());
+	        cactusBorder.setLocation(cactusBorder.getX() - velocity, cactusBorder.getY());
 	        if(!crouch) {
 	        	dinoBorder.setLocation(dino.getX(), dino.getY());
 	        }//fixed border for non crouching dino
@@ -292,6 +305,13 @@ public class ActualGame extends JFrame implements KeyListener {
 		public void actionPerformed(ActionEvent e) {
 			score++;
 			scoreDisplay.setText("Score: " + score);
+			
+			if(score > 300) {
+				velocity = 5;
+			}
+			else if(score > 500) {
+				velocity = 6;
+			}
 		}
 	}
 	

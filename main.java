@@ -9,9 +9,14 @@
  * 
  * Problems:
  * 
- * 	dino border auto down bug causing to collide with a cactus
- * 	space long press (ganahan ko 1 input ra sya basta mag long press ang user)
  * 	color burned gui (still needs to be optimized)
+ * 
+ * Goals:
+ * 	
+ * 	score interval = velocity++
+ * 	name above dino following its top as always bisag mo saka pana or mo naog
+ * 	attach the birds
+ * 	randomizer for obstacles
  * 
  * */
 public class Main {
