@@ -9,7 +9,9 @@
  * 
  * Problems:
  * 
- * 	dino border auto down
+ * 	dino border auto down bug causing to collide with a cactus
+ * 	space long press (ganahan ko 1 input ra sya basta mag long press ang user)
+ * 	color burned gui (still needs to be optimized)
  * 
  * */
 public class Main {

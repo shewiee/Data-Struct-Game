@@ -15,11 +15,16 @@ import javax.swing.border.LineBorder;
 
 public class ActualGame extends JFrame implements KeyListener {
 
-	Icon dinoImage = new ImageIcon("textures\\dinasourstand.png");
 	ImageIcon logo = new ImageIcon("textures\\icon.png");
+	Icon dinoImage = new ImageIcon("textures\\dinasourstand.png");
 	JLabel dino = new JLabel();
 	Icon cactusImage = new ImageIcon("textures\\cactus.png");
 	JLabel cactus = new JLabel();
+	Icon cloudsImage = new ImageIcon("textures\\clouds.png");
+	JLabel clouds1 = new JLabel();
+	JLabel clouds2 = new JLabel();
+	JLabel clouds3 = new JLabel();
+
 	JLabel scoreDisplay = new JLabel();
 	JPanel panelCharacter = new JPanel();
 	// ImageIcon background = new ImageIcon();
@@ -27,6 +32,7 @@ public class ActualGame extends JFrame implements KeyListener {
 	Timer cactusTimer;
 	Timer scoreTimer;
 	Timer dinoRunAnimTimer;
+	Timer cloudsTimer;
 
 	boolean playing = false;
 	boolean crouch = false;
@@ -34,6 +40,7 @@ public class ActualGame extends JFrame implements KeyListener {
 	boolean onAir = false;
 	boolean walk = false;
 	boolean collided = false;
+	boolean keybindInput = false;
 	int score;
 
 	// entity borders
@@ -77,6 +84,13 @@ public class ActualGame extends JFrame implements KeyListener {
 
 		dino.setIcon(dinoImage);
 		cactus.setIcon(cactusImage);
+		clouds1.setIcon(cloudsImage);
+		clouds2.setIcon(cloudsImage);
+		clouds3.setIcon(cloudsImage);
+		clouds1.setBounds(700, 35, 94, 94);
+		clouds2.setBounds(200, -10, 94, 94);
+		clouds3.setBounds(500, 60, 94, 94);
+
 		initialPosition();
 
 		// background
@@ -91,12 +105,16 @@ public class ActualGame extends JFrame implements KeyListener {
 		this.add(scoreDisplay);
 		this.add(cactus);
 		this.add(cactusBorder);
+		this.add(clouds1);
+		this.add(clouds2);
+		this.add(clouds3);
 		this.setVisible(true);
 
 		jumpTimer = new Timer(10, new jumpTimerListener());
 		cactusTimer = new Timer(10, new cactusListener());
 		scoreTimer = new Timer(100, new scoreTimerListener());
 		dinoRunAnimTimer = new Timer(100, new dinoRunAnimTimerListener());
+		cloudsTimer = new Timer(100, new cloudsTimerListener());
 	}
 
 	public void initialPosition() {
@@ -104,7 +122,7 @@ public class ActualGame extends JFrame implements KeyListener {
 		dinoX = 35;
 		dinoY = 225;
 		dinoStandBorderWidth = 56;
-		dinoStandBorderHeight = 64;
+		dinoStandBorderHeight = 60;
 		dinoCrouchY = dinoY + 25;
 		dinoCrouchBorderWidth = 80;
 		dinoCrouchBorderHeight = 34;
@@ -132,7 +150,9 @@ public class ActualGame extends JFrame implements KeyListener {
 		// purposes
 	}
 
+	@Override
 	public void keyTyped(KeyEvent e) {
+
 		switch (e.getKeyChar()) {
 		case ' ':
 			if (!playing) {
@@ -140,9 +160,9 @@ public class ActualGame extends JFrame implements KeyListener {
 				dino.setLocation(dino.getX(), dino.getY());
 				dinoBorder.setLocation(dinoBorder.getX(), dinoBorder.getY());
 				reset();
-				
 				playing = true;
 				initialPosition();
+				cloudsTimer.start();
 				cactusTimer.start();
 				scoreTimer.start();
 				dinoRunAnimTimer.start();
@@ -153,15 +173,30 @@ public class ActualGame extends JFrame implements KeyListener {
 			}
 			break;
 		}
-
 	}
 
+	@Override
 	public void keyPressed(KeyEvent e) {
+
 		if (playing) {
 			switch (e.getKeyCode()) {
 			case 38:
-				jumpTimer.start();
-				dinoBorder.setBounds(dinoX, dinoY, dinoStandBorderWidth, dinoStandBorderHeight);
+				if (!playing) {
+					jumpTimer.stop();
+					dino.setLocation(dino.getX(), dino.getY());
+					dinoBorder.setLocation(dinoBorder.getX(), dinoBorder.getY());
+					reset();
+					playing = true;
+					initialPosition();
+					cloudsTimer.start();
+					cactusTimer.start();
+					scoreTimer.start();
+					dinoRunAnimTimer.start();
+				} else {
+					dino.setIcon(new javax.swing.ImageIcon("textures\\dinasourstand.png"));
+					jumpTimer.start();
+					dinoBorder.setBounds(dinoX, dinoY, dinoStandBorderWidth, dinoStandBorderHeight);
+				}
 				break;
 			case 40:
 				if (!onAir || jump) {
@@ -176,15 +211,14 @@ public class ActualGame extends JFrame implements KeyListener {
 
 	public void keyReleased(KeyEvent e) {
 		crouch = false;
+		keybindInput = false;
 		dinoBorder.setBounds(dinoX, dinoY, dinoStandBorderWidth, dinoStandBorderHeight);
 	}
 
 	private class jumpTimerListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (collided) {
-				//moved
-			} else{
+			if (!collided) {
 				if (!jump) {
 					dinoBorder.setLocation(dino.getX(), dino.getY() - 5);
 					dino.setLocation(dino.getX(), dino.getY() - 5);
@@ -203,7 +237,6 @@ public class ActualGame extends JFrame implements KeyListener {
 					jumpTimer.stop();
 				}
 			}
-
 		}
 	}
 
@@ -228,12 +261,14 @@ public class ActualGame extends JFrame implements KeyListener {
 
 			// EXAMPLE OF COLLISION
 			if (checkCollision(dinoBorder, cactusBorder)) {
+				dino.setLocation(dino.getX(), dino.getY());
 				playing = false;
 				collided = true;
 				System.out.println("Collided");
 				cactusTimer.stop();
 				scoreTimer.stop();
 				dinoRunAnimTimer.stop();
+				cloudsTimer.stop();
 			}
 		}
 	}
@@ -251,6 +286,24 @@ public class ActualGame extends JFrame implements KeyListener {
 			scoreDisplay.setText("Score: " + score);
 		}
 	}
+	
+	private class cloudsTimerListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			clouds1.setLocation(clouds1.getX() - 1, clouds1.getY());
+			clouds2.setLocation(clouds2.getX() - 1, clouds2.getY());
+			clouds3.setLocation(clouds3.getX() - 1, clouds3.getY());
+			if (clouds1.getX() < cactusThroughLimit) {
+				clouds1.setLocation(cactusX, clouds1.getY());
+			}
+			else if(clouds2.getX() < cactusThroughLimit) {
+				clouds2.setLocation(cactusX, clouds2.getY());
+			}
+			else if(clouds3.getX() < cactusThroughLimit) {
+				clouds3.setLocation(cactusX, clouds3.getY());
+			}
+		}
+	}
 
 	private class dinoRunAnimTimerListener implements ActionListener {
 		@Override
@@ -261,7 +314,7 @@ public class ActualGame extends JFrame implements KeyListener {
 			} else if (walk && !jump && !crouch) {
 				dino.setIcon(new javax.swing.ImageIcon("textures\\dinasourstandright.png"));
 				walk = false;
-			} else if (jump && onAir) {
+			} else if (jump || onAir) {
 				dino.setIcon(new javax.swing.ImageIcon("textures\\dinasourstand.png"));
 				walk = false;
 			} else if (crouch && !walk && !onAir) {
