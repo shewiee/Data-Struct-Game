@@ -116,6 +116,7 @@ public class ActualGame extends JFrame implements KeyListener {
 		dinoRunAnimTimer = new Timer(100, new dinoRunAnimTimerListener());
 		cloudsTimer = new Timer(100, new cloudsTimerListener());
 	}
+	
 
 	public void initialPosition() {
 		score = 0;
@@ -216,28 +217,30 @@ public class ActualGame extends JFrame implements KeyListener {
 	}
 
 	private class jumpTimerListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (!collided) {
-				if (!jump) {
-					dinoBorder.setLocation(dino.getX(), dino.getY() - 5);
-					dino.setLocation(dino.getX(), dino.getY() - 5);
-					onAir = true;
-				} else {
-					dinoBorder.setLocation(dino.getX(), dino.getY() + 10);
-					dino.setLocation(dino.getX(), dino.getY() + 10);
-				}
-				if (dino.getY() <= dinoJumpLimit) {
-					jump = true;
-				} else if (dino.getY() >= dinoY) {
-					dinoBorder.setLocation(dino.getX(), dinoY);
-					dino.setLocation(dino.getX(), dinoY);
-					jump = false;
-					onAir = false;
-					jumpTimer.stop();
-				}
-			}
-		}
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	        if (!collided) {
+	            if (!jump) {
+	                dinoBorder.setLocation(dino.getX(), dino.getY() - 5);
+	                dino.setLocation(dino.getX(), dino.getY() - 5);
+	                onAir = true;
+	            } else {
+	                dinoBorder.setLocation(dino.getX(), dino.getY() + 10);
+	                dino.setLocation(dino.getX(), dino.getY() + 10);
+	            }
+
+	            if (dino.getY() <= dinoJumpLimit) {
+	                jump = true;
+	            } else if (dino.getY() >= dinoY) {
+	                dinoBorder.setLocation(dino.getX(), dinoY);
+	                dino.setLocation(dino.getX(), dinoY);
+	                dinoBorder.setBounds(dinoBorder.getX(), dinoBorder.getY(), dinoStandBorderWidth, dinoStandBorderHeight); 
+	                jump = false;
+	                onAir = false;
+	                jumpTimer.stop();
+	            }
+	        }
+	    }
 	}
 
 	private void reset() {
@@ -250,27 +253,30 @@ public class ActualGame extends JFrame implements KeyListener {
 	}
 
 	private class cactusListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			cactus.setLocation(cactus.getX() - 5, cactus.getY());
-			cactusBorder.setLocation(cactusBorder.getX() - 5, cactusBorder.getY());
-			if (cactus.getX() < cactusThroughLimit) {
-				cactus.setLocation(cactusX, cactus.getY());
-				cactusBorder.setLocation(cactusBorderX, cactusBorder.getY());
-			}
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	        cactus.setLocation(cactus.getX() - 5, cactus.getY());
+	        cactusBorder.setLocation(cactusBorder.getX() - 5, cactusBorder.getY());
+	        dinoBorder.setLocation(dino.getX(), dino.getY()); // Updated line
 
-			// EXAMPLE OF COLLISION
-			if (checkCollision(dinoBorder, cactusBorder)) {
-				dino.setLocation(dino.getX(), dino.getY());
-				playing = false;
-				collided = true;
-				System.out.println("Collided");
-				cactusTimer.stop();
-				scoreTimer.stop();
-				dinoRunAnimTimer.stop();
-				cloudsTimer.stop();
-			}
-		}
+	        if (cactus.getX() < cactusThroughLimit) {
+	            cactus.setLocation(cactusX, cactus.getY());
+	            cactusBorder.setLocation(cactusBorderX, cactusBorder.getY());
+	        }
+
+	        // EXAMPLE OF COLLISION
+	        if (checkCollision(dinoBorder, cactusBorder)) {
+	            dino.setLocation(dino.getX(), dino.getY());
+	            dinoBorder.setLocation(dino.getX(), dino.getY()); // Updated line
+	            playing = false;
+	            collided = true;
+	            System.out.println("Collided");
+	            cactusTimer.stop();
+	            scoreTimer.stop();
+	            dinoRunAnimTimer.stop();
+	            cloudsTimer.stop();
+	        }
+	    }
 	}
 
 	private boolean checkCollision(JComponent comp1, JComponent comp2) {
